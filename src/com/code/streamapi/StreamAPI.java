@@ -334,7 +334,46 @@ public class StreamAPI {
 		
 		return input.stream().map(Employees::getName).collect(Collectors.joining(","));
 	};
+	//Find the department having the highest total salary.
+	
+	Function<List<Employees>,String> highestDeptSal = (input)->{
+		
+		return input.stream().collect(Collectors.groupingBy(Employees::getDepartname,Collectors.summingDouble(Employees::getSalary))).entrySet().stream().max(Map.Entry.comparingByValue()).map(Map.Entry::getKey).orElse("No Department Found");
+	};
+	//Find the department having the lowest total salary.
+	
+	Function<List<Employees>,String>lowestDeptSal = (input)->{
+		
+		return input.stream().collect(Collectors.groupingBy(Employees::getDepartname,Collectors.summingDouble(Employees::getSalary))).entrySet().stream().min(Map.Entry.comparingByValue()).map(Map.Entry::getKey).orElse("No Department Found");
+	};
 
+	//Find the department having the highest average salary.
+	
+	Function<List<Employees>,String> highestAvgSalDept = (input)->{
+		
+		return input.stream().collect(Collectors.groupingBy(Employees::getDepartname,Collectors.averagingDouble(Employees::getSalary))).entrySet().stream().max(Map.Entry.comparingByValue()).map(Map.Entry::getKey).orElse("Department not found");
+	};
+	
+	//Find the department containing the maximum number of employees.
+	
+	Function<List<Employees>,String>findDeptMaxNoEmp = (input)->{
+		
+		return input.stream().collect(Collectors.groupingBy(Employees::getDepartname,Collectors.counting())).entrySet().stream().max(Map.Entry.comparingByValue()).map(Map.Entry::getKey).orElse("No department found");
+	};
+	
+	//Find the department containing the minimum number of employees.
+	Function<List<Employees>,String> minnoofemp = (input)->{
+		
+		return input.stream().collect(Collectors.groupingBy(Employees::getDepartname,Collectors.counting())).entrySet().stream().min(Map.Entry.comparingByKey()).map(Map.Entry::getKey).orElse("Department not found");
+	};
+	
+	//Find the second-highest-paid employee from each department.
+	
+	Function<List<Employees>,Employees> shighest = (input)->{
+		
+		input.stream().sorted(Employees::getSalary,Comparator.reverseOrder()).skip(1).limit(2);
+	};
+	
 	public static void main(String[]args) {
 		
 		StreamAPI api = new StreamAPI();
@@ -365,7 +404,7 @@ public class StreamAPI {
 	    System.out.println(api.annie.apply(employees));
 	    System.out.println(api.sortemp.apply(employees));
 	    System.out.println(api.descemp.apply(employees));
-	    List<Employees> names = Arrays.asList(new Employees(1l,"John","IT",3000.00),new Employees(5l,"Annie","HR",1800.00),new Employees(2l,"David","HR",1800.00),new Employees(3l,"Bob","IT",3500.00),new Employees(4l,"Annie","IT",3000.00));
+	    List<Employees> names = Arrays.asList(new Employees(1l,"John","IT",3000.00),new Employees(5l,"Annie","HR",100.00),new Employees(2l,"David","HR",9800.00),new Employees(3l,"Bob","IT",3500.00),new Employees(4l,"Annie","IT",3000.00));
 	    System.out.println(api.sortAlph.apply(names));
 	    System.out.println(api.sortId.apply(names));
 	    List<Employees> sal = Arrays.asList(new Employees(1l,"John","IT",3000.00),new Employees(5l,"Annie","HR",1800.00),new Employees(2l,"David","HR",1800.00),new Employees(3l,"Bob","IT",3500.00),new Employees(4l,"Annie","IT",3000.00));
@@ -392,6 +431,11 @@ public class StreamAPI {
 	    api.occurences.apply(names);
 	    api.partitioning.accept(names);
 	    System.out.println(api.commaseperated.apply(names));
+//	    System.out.println(api.highestDeptSal.apply(names));
+//	    System.out.println(api.lowestDeptSal.apply(names));
+	    System.out.println(api.highestAvgSalDept.apply(names));
+	    System.out.println(api.findDeptMaxNoEmp.apply(names));
+	    System.out.println(api.minnoofemp.apply(names));
 
 	}
 }
